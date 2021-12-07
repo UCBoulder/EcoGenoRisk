@@ -1,12 +1,13 @@
-import pandas as pd
+#import pandas as pd
 import wget
 import requests
 import re
 import shutil
-import os.path
+#import os.path
 import os
-import protein_file
-import subprocess
+#import protein_file
+#import subprocess
+import gzip
 from fake_useragent import UserAgent
 
 ua = UserAgent()
@@ -24,36 +25,38 @@ else:
      with open(text_file, 'w') as genome_list_out:
          genome_list_out.write(temp_genome_list.text)
      genome_list_out.close()
-
-processes = []
 count = 0
 total = 0
-
-file_object = open(text_file, 'a')
-with open(text_file ,'r') as archaea_summary:
+with open(text_file, 'r') as archaea_summary:
+    temp= archaea_summary.readline()
     for line in archaea_summary:
-        line1 = archaea_summary.readline()
-        print(line1)
-        if line1.find('Complete Genome') != -1:
-            output = line1.split("\t")
+        output = line.split("\t")
+        if re.match(output[11],"Complete Genome"):
+            print(output)
             link = output[19]
-            print(link)
             org_name = link
             species_name = re.search(r'(.*)/(.*)', org_name).group(2)
             url_new = link+'/'+species_name+'_protein.faa.gz'
-            #print(line)
-            #print(url_new)
-            # wget.download(url_new)
-            # file_name = species_name+'_protein.faa.gz'
-            # destination = os.path.abspath('protein_file')
-            # source = os.path.abspath(file_name)
-            # shutil.move(source, destination+'/'+file_name)
+            wget.download(url_new)
+            file_name = species_name+'_protein.faa.gz'
+            destination = os.path.abspath('protein_file')
+            source = os.path.abspath(file_name)
+            shutil.move(source, destination)
             total+=1
         count+=1
 
+dir_name = 'x'
+extension = ".gz"
+os.chdir(destination)
+for item in os.listdir(destination):  # loop through items in dir
+    if item.endswith(extension):  # check for ".gz" extension
+        gz_name = os.path.abspath(item)  # get full path of files
+        file_name = (os.path.basename(gz_name)).rsplit('.', 1)[0]  # get file name for file within
+        with gzip.open(gz_name, "rb") as f_in, open(file_name, "wb") as f_out:
+            shutil.copyfileobj(f_in, f_out)
+        os.remove(gz_name)  # delete zipped file
 
+archaea_summary.close()
+print("That's all folks")
 print(count)
 print(total)
-archaea_summary.close()
-#os.remove('assembly_summary.txt')
-print("That's all folks")

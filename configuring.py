@@ -5,8 +5,6 @@ import shutil
 import os
 import gzip
 import subprocess
-from subprocess import PIPE, Popen
-import sys
 from fake_useragent import UserAgent
 
 ua = UserAgent()
@@ -63,18 +61,26 @@ if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches') ==
     directory = '/home/anna/PycharmProjects/pythonProject/DIAMOND_matches'
     os.makedirs(directory)
 
+def run_diamond(file_name:str, reference: str, mode:str ="blastp")-> str:
+    args=[
+        "--db", reference,
+        "--query", file_name,
+        ]
+    return run_diamond(mode, args).stdout
+
 #SUBPROCESS INTERACTION
-yeet=subprocess.run(['diamond','version'], capture_output=True, text=True)
+yeet = subprocess.run(['diamond','version'], capture_output=True, text=True)
 print('stdout:', yeet.stdout)
 for item in os.listdir(destination):
     if item.endswith('.faa'):
         file_path = os.path.abspath(item)
         file_name = (os.path.basename(file_path)).rsplit('.', 1)[0]
         matches = file_name + "_matches"
-        makedb= ['diamond', 'makedb', '--', 'in', reference, '-d', 'reference']
-        blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_name, '-o', matches]
-        subprocess.run(str(makedb), capture_output=True, text=True)  #converted to string due to previous errors saying that the argument makedb is a list
-        subprocess.run(str(blastp), capture_output=True, text=True)
+        run_diamond(file_name, reference, "blastp")
+        # makedb= ['diamond', 'makedb', '--', 'in', reference, '-d', 'reference']
+        # blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_name, '-o', matches]
+        # #subprocess.run(str(makedb), capture_output=True, text=True)  #converted to string due to previous errors saying that the argument makedb is a list
+        # #subprocess.run(str(blastp), capture_output=True, text=True)
         shutil.move(os.path.abspath(matches), directory)
 
 archaea_summary.close()

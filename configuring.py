@@ -5,7 +5,9 @@ import shutil
 import os
 import gzip
 import subprocess
+from subprocess import PIPE, Popen
 from fake_useragent import UserAgent
+import time
 
 ua = UserAgent()
 url = 'https://ftp.ncbi.nlm.nih.gov/genomes/refseq/archaea/assembly_summary.txt'
@@ -61,27 +63,32 @@ if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches') ==
     directory = '/home/anna/PycharmProjects/pythonProject/DIAMOND_matches'
     os.makedirs(directory)
 
-def run_diamond(file_name:str, reference: str, mode:str ="blastp")-> str:
-    args=[
-        "--db", reference,
-        "--query", file_name,
-        ]
-    return run_diamond(mode, args).stdout
 
 #SUBPROCESS INTERACTION
-yeet = subprocess.run(['diamond','version'], capture_output=True, text=True)
+yeet = Popen(['diamond','version'])
 print('stdout:', yeet.stdout)
+makedb = ['diamond', 'makedb', '--', 'in', reference, '-d', 'reference']
+lib=Popen(makedb, stdin=PIPE, stdout=PIPE)
+#lib=subprocess.call(makedb)
+lib.communicate()
+counter = 0
 for item in os.listdir(destination):
     if item.endswith('.faa'):
+        print(counter)
         file_path = os.path.abspath(item)
         file_name = (os.path.basename(file_path)).rsplit('.', 1)[0]
         matches = file_name + "_matches"
-        run_diamond(file_name, reference, "blastp")
-        # makedb= ['diamond', 'makedb', '--', 'in', reference, '-d', 'reference']
-        # blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_name, '-o', matches]
-        # #subprocess.run(str(makedb), capture_output=True, text=True)  #converted to string due to previous errors saying that the argument makedb is a list
-        # #subprocess.run(str(blastp), capture_output=True, text=True)
+        # run_diamond(file_name, reference, "blastp")
+        time.sleep(10)
+        blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_name, '-o', matches]
+        time.sleep(10)
+        #subprocess.run(str(blastp), capture_output=True, text=True)
+        #search=Popen(blastp, stdin=PIPE,stdout=PIPE)
+        #search=subprocess.call(blastp)
+        #search.communicate()
+        time.sleep(10)
         shutil.move(os.path.abspath(matches), directory)
+        counter = counter + 1
 
 archaea_summary.close()
 uniprot.close()

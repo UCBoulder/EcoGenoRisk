@@ -9,7 +9,7 @@ from subprocess import PIPE, Popen
 import time
 from fake_useragent import UserAgent
 
-
+# Asks for input for domain, returns a specific url
 def input_domain():
     domain = input("Enter domain:")
     lower_case = domain.lower()
@@ -26,46 +26,46 @@ def input_domain():
     else:
         print("Invalid Input")
 
-    return ncbi_url, lower_case
+    return ncbi_url, lower_case  # returns domain name and url
 
 
 # Downloading/checking for assembly file
-def checking_assembly_file(text, link):
+def checking_assembly_file(text, link): # asks for assembly_summary text file name, requires download link
     ua = UserAgent()
     header = {'User-Agent': str(ua.chrome)}
-    if os.path.exists(text):
+    if os.path.exists(text):  # checks if file exists already in order to not spam NCBI
         return "File exists"
     else:
-        temp_genome_list = requests.get(link, headers=header)
-        temp_genome_list = requests.get(link)
+        temp_genome_list = requests.get(link, headers=header)  # permissions for opening file through NCBI
+        #temp_genome_list = requests.get(link)
         print(temp_genome_list.text)
         with open(text, 'w') as genome_list_out:
-            genome_list_out.write(temp_genome_list.text)
+            genome_list_out.write(temp_genome_list.text)  # copies content from the website, pastes it into assembly_summary file
         genome_list_out.close()
 
 
 # looping through assembly summary file, finding the samples that have a complete genome, and downloading the FTP file
 def file_extraction(text, dom):
     with open(text, 'r') as assembly_summary:
-        assembly_summary.readline()
+        assembly_summary.readline()  # reads line by line, iterating through the doc
         for line in assembly_summary:
-            output = line.split("\t")
+            output = line.split("\t")  # separating line by tab
             if re.match(output[11], "Complete Genome"):
-                link = output[19]
+                link = output[19]     # finds ftp path
                 org_name = link
                 species_name = re.search(r'(.*)/(.*)', org_name).group(2)
-                url_new = link + '/' + species_name + '_protein.faa.gz'
-                # wget.download(url_new)
+                url_new = link + '/' + species_name + '_protein.faa.gz' # finds exact address to download the exact url of the FTP file
+                wget.download(url_new)
                 download_name = species_name + '_protein.faa.gz'
-                destination = os.path.abspath(dom+ '_protein_file')
+                destination = os.path.abspath(dom+ '_protein_file')  # creates a domain specified folder pathway
                 source = os.path.abspath(download_name)
-                # shutil.move(source, destination)
+                shutil.move(source, destination)   # moves file into domain specified folder
     return destination
     assembly_summary.close()
 
 
 # Extracting all files and deleting the zip folder
-def file_management(dest):
+def file_management(dest): # takes the destination of the domain folder
     dir_name = 'x'
     extension = ".gz"
     file_name = ''
@@ -80,30 +80,28 @@ def file_management(dest):
 
 
 # DIAMOND IMPLEMENTATION
-def diamond_impl(dest):
+def diamond_impl(dest): #takes domain folder path
     #Muniprot = open('/home/anna/PycharmProjects/pythonProject/uniprot.fasta')
     # reference = uniprot.read()
-    if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches') == 'EMPTY':
+    if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches') == 'EMPTY': # checks if there is a DIAMOND_matches folder
         directory = '/home/anna/PycharmProjects/pythonProject/DIAMOND_matches'
-        os.makedirs(directory)
+        os.makedirs(directory)  # if library is present, the directory is changed to the folders path
 
-    if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches/reference.dmnd') == 'EMPTY':
-        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/pythonProject/uniprot.fasta', '-d', 'reference']
+    if os.path.abspath('home/anna/PycharmProjects/pythonProject/DIAMOND_matches/reference.dmnd') == 'EMPTY':    #if there currently is no reference library (.dmnd), makedb creates a DIAMOND library
+        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/pythonProject/uniprot.fasta', '-d', 'reference'] # reference library full pathway
         #lib = Popen(makedb, stdout=PIPE, shell=True)
         subprocess.run(makedb)
         # (output, err)=lib.communicate()
         # p_status=lib.wait()
 
-    for item in os.listdir(dest):
+    for item in os.listdir(dest):   #for item in domain_folder, if item is a faa file, complete diamond analysis
         if item.endswith('.faa'):
-            #print(counter)
             file_path = os.path.abspath(item)
-            file_name = (os.path.basename(file_path)).rsplit('.', 1)[0]
+            file_name = (os.path.basename(file_path)).rsplit('.', 1)[0] #name of sample
             matches = file_name + "_matches"
-            # Update for max-target and for output - just make like the other
-            blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_path, '-o', matches, '--max', '-target','-seqs', '1', '--outftm', '6']
+            blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_path, '-o', matches, '--max', '-target','-seqs', '1', '--outftm', '6'] #completes DIAMOND search by using full path
             subprocess.run(blastp)
             # search=Popen(blastp, stdin=PIPE,stdout=PIPE)
             #search=subprocess.call(blastp)
             #search.communicate()
-            shutil.move(os.path.abspath(matches), directory)
+            shutil.move(os.path.abspath(matches), directory)   # moves to DIAMOND folder

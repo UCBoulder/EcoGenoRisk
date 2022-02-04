@@ -83,39 +83,36 @@ def file_management(dest):  # takes the destination of the domain folder
 
 # DIAMOND IMPLEMENTATION
 def diamond_impl(dest):  # takes domain folder path
-    # Muniprot = open('/home/anna/PycharmProjects/pythonProject/uniprot.fasta')
-    # reference = uniprot.read()
-    if os.path.abspath(
-            'home/anna/PycharmProjects/pythonProject/DIAMOND_matches') == 'EMPTY':  # checks if there is a DIAMOND_matches folder
-        directory = '/home/anna/PycharmProjects/pythonProject/DIAMOND_matches'
-        os.makedirs(directory)  # if library is present, the directory is changed to the folders path
-        print(directory)
-    else:
-        directory=os.path.abspath("DIAMOND_matches")
-        print(directory)
-    #
-    if os.path.abspath('/home/anna/PycharmProjects/pythonProject/DIAMOND_matches/reference.dmnd') == 'EMPTY':  # if there currently is no reference library (.dmnd), makedb creates a DIAMOND library
-         makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/pythonProject/uniprot.fasta', '-d',
-                   'reference']  # reference library full pathway
-    #     #Popen(makedb, stdout=PIPE, shell=True)
-         lib = subprocess.run(makedb)
-         lib.communicate()
-         print("Library complete")
 
+    directory='/home/anna/PycharmProjects/pythonProject/DIAMOND_matches'
+    if os.path.exists(directory):
+        print(directory)
+        os.chdir(directory)
+    else:
+        os.chdir('/home/anna/PycharmProjects/pythonProject')
+        os.makedirs('DIAMOND_matches')  # if library is present, the directory is changed to the folders path
+        os.chdir(directory)
+        print(directory)
+
+    if os.path.exists('/home/anna/PycharmProjects/pythonProject/DIAMOND_matches/reference.dmnd'):  # if there currently is no reference library (.dmnd), makedb creates a DIAMOND library
+        print("Library Detected")
+    else:
+        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/pythonProject/uniprot.fasta', '-d',
+                  'reference']  # reference library full pathway
+        subprocess.run(makedb)
+        print("Library complete")
+
+    os.chdir(dest)
     for item in os.listdir(dest):  # for item in domain_folder, if item is a faa file, complete diamond analysis
         if item.endswith('.faa'):
             file_path = os.path.abspath(item)
             print(file_path)
             file_name = (os.path.basename(file_path)).rsplit('.', 1)[0]  # name of sample
-            print(file_name)
             matches = file_name + "_matches"
-            if os.path.abspath(directory+"/"+matches)=='EMPTY':
-                blastp = ['diamond', 'blastp', '-d', 'reference', '-q', file_path, '-o', matches, '--max-target-seqs', '1', '--outfmt', '6']  # completes DIAMOND search by using full path
-                subprocess.run(blastp)
+            if os.path.exists(directory+"/"+matches):
+                print(" ")
             else:
-                print(matches)
-            # search=Popen(blastp, stdin=PIPE,stdout=PIPE)
-            # search=subprocess.call(blastp)
-            # search.communicate()
-            shutil.move(os.path.abspath(matches), directory)  # moves to DIAMOND folder
+                blastp = ['diamond', 'blastp', '-d', '/home/anna/PycharmProjects/pythonProject/DIAMOND_matches/reference.dmnd', '-q', file_path, '-o', matches, '--max-target-seqs', '1', '--outfmt', '6']  # completes DIAMOND search by using full path
+                subprocess.run(blastp)
+                shutil.move(os.path.abspath(matches), directory)  # moves to DIAMOND folder
     return directory

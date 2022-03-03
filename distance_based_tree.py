@@ -48,8 +48,9 @@ os.chdir(directory)
 # #genome_diff = np.stack([horizontal, genome_diff])
 # #genome_diff = vertical.append(genome_diff)
 # np.savetxt("Genome_to_genome_comparison", genome_diff, fmt='%s')
-horizontal = []
+horizontal = ['']
 comparison = []
+vertical=['']
 with open('archaea_big_matrix.csv', 'r') as header:
     genome = header.readline()
     for genome in header:
@@ -58,32 +59,38 @@ with open('archaea_big_matrix.csv', 'r') as header:
             print(" ")
         else:
             horizontal.append(genome_name)
-            if genome_name=="GCF_000968395.2_ASM96839v2_protein_matches":
-                vertical=["GCF_000968395.2_ASM96839v2_protein_matches"]
-            else:
-                vertical = np.vstack([vertical, genome_name])
-print(horizontal)
-print(vertical)
+            vertiical = np.vstack([vertical, genome_name])
+
 matrix_2 = open('archaea_big_matrix.csv', 'r')
 matrix_2_compare = matrix_2.readlines()
-with open('archaea_big_matrix.csv', 'r') as matrix_summary:
-    line = matrix_summary.readline()
-    print("OOWEEEE")
-    counter = 1
-    for line in matrix_summary:
-        split_space = line.split()
+matrix_s=open('archaea_big_matrix.csv','r')
+matrix_summary = matrix_s.readlines()
+valid=0
+for line in matrix_summary:
+    print("OOWEEEE")    # currently prints 408 of those statements
+    split_space = line.split()
+    if split_space[0].startswith("Name_of_Genome"):
+        print()
+        valid=1
+    else:
         for line2 in matrix_2_compare:
             compare_line = line2.split()
             diff_sum = 0
-            if compare_line == '1' or compare_line == '0':
-                for i in compare_line:
-                    if i == '1' or i == '0':
-                        diff_sum = diff_sum + abs(int(i) - int(split_space[counter]))
-                comparison.append(diff_sum)
-            print(diff_sum)
-        counter += 1
-    horizontal = np.vstack([horizontal, comparison])
+            counter = 1
+            valid = 0
+            for bit in compare_line:
+                if re.search("GCF", bit) or re.search(".",bit):
+                    valid = 1
+                else:
+                    diff_sum = diff_sum + abs(int(bit) - int(split_space[counter]))
+                    counter += 1
+                    print(diff_sum)
+            comparison.append(diff_sum)     #after this line runs, the matrix doesn't start a new row and just keeps adding more numbers
+    if valid==0:
+        horizontal = np.vstack([horizontal, comparison])
+
+
 np.savetxt("Genome_to_genome_comparison_check", horizontal, fmt='%s')
-if os.path.abspath("Genome_to_genome_comparison_check"):
-    yeet = np.vstack([vertical, horizontal])
-    np.savetxt("Genome_to_genome_comparison_w/_headers", vertical, fmt='%s')
+#if os.path.abspath("Genome_to_genome_comparison_check"):
+    #yeet = np.vstack([vertical, horizontal])
+    #np.savetxt("Genome_to_genome_comparison_w/_headers", vertical, fmt='%s')

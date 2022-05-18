@@ -40,5 +40,5 @@ nrow(bacteria_binary)
 bacteria_binary_taxonomy <- merge(assembly_taxid,bacteria_binary,by="Name_of_Genome",all.y = TRUE)
 nrow(bacteria_binary_taxonomy)
 sub=subset(bacteria_binary_taxonomy, select=X1.1.1.1:X7.6.2.16)
-Output_names_only           <- data.frame(bacteria_binary_taxonomy$root,sub)
-
+Output_names_only<- data.frame(bacteria_binary_taxonomy$root,sub)
+write.table(Output_names_only, "bacteria_big_matrix.csv", quote=FALSE, row.names=FALSE)

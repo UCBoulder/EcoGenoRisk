@@ -29,16 +29,23 @@ bacteria_binary$Name_of_Genome <- wanted_reference
 # For the assembly summary, to cleanup things and using only the columns we need
 # create a new dataframe and rename the columns with useful descriptors
 nrow(assembly_summary)
-assembly_only <- data.frame(assembly_summary$assembly_accession, assembly_summary$taxid)
-colnames(assembly_only) <- c("Name_of_Genome","taxid")
+assembly_only <- data.frame(assembly_summary$assembly_accession, assembly_summary$infraspecific_name ,assembly_summary$taxid)
+colnames(assembly_only) <- c("Name_of_Genome","infra_specific_name","taxid")
 colnames(lineage_only) <-c("taxid")
 
 # Now we just merge!
+
+##merging of assembly_only and full_lineage results in a GCF list+tax id for bacteria alone
 assembly_taxid           <- merge(assembly_only, full_lineage, by="taxid")
+assembly_taxid$root <- str_c(assembly_taxid$root, " ", assembly_taxid$infra_specific_name)
 nrow(assembly_taxid)
 nrow(bacteria_binary)
+
+##merging of bacteria taxid/GCF list with complete genomes for bacteria 
 bacteria_binary_taxonomy <- merge(assembly_taxid,bacteria_binary,by="Name_of_Genome",all.y = TRUE)
 nrow(bacteria_binary_taxonomy)
-sub=subset(bacteria_binary_taxonomy, select=X1.1.1.1:X7.6.2.16)
+sub=subset(bacteria_binary_taxonomy, select='X1.1.1.1':'X7.6.2.16')
 Output_names_only<- data.frame(bacteria_binary_taxonomy$root,sub)
-write.table(Output_names_only, "bacteria_big_matrix.csv", quote=FALSE, row.names=FALSE)
+colnames(Output_names_only) <-gsub("X", "", colnames(Output_names_only))
+colnames(Output_names_only)[1]<-"Name_of_Genome"
+write.table(Output_names_only, "bacteria_big_matrix_tab.txt", quote=FALSE, row.names=FALSE, sep = "\t")

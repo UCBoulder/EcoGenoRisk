@@ -1,3 +1,6 @@
+library(stringr)
+library(dplyr)
+
 ### Load in the files that are needed ###
 # Need the actually output file
 bacteria_binary   <- read.table("bacteria_combined1.csv", header=TRUE, quote = "", sep = ' ')
@@ -44,8 +47,9 @@ nrow(bacteria_binary)
 ##merging of bacteria taxid/GCF list with complete genomes for bacteria 
 bacteria_binary_taxonomy <- merge(assembly_taxid,bacteria_binary,by="Name_of_Genome",all.y = TRUE)
 nrow(bacteria_binary_taxonomy)
-sub=subset(bacteria_binary_taxonomy, select='X1.1.1.1':'X7.6.2.16')
+sub=subset(bacteria_binary_taxonomy, matches='.')
 Output_names_only<- data.frame(bacteria_binary_taxonomy$root,sub)
+#Output_names_only<- data.frame(bacteria_binary_taxonomy$root,select(bacteria_binary_taxonomy, contain(".")))
 colnames(Output_names_only) <-gsub("X", "", colnames(Output_names_only))
 colnames(Output_names_only)[1]<-"Name_of_Genome"
-write.table(Output_names_only, "bacteria_big_matrix_tab.txt", quote=FALSE, row.names=FALSE, sep = "\t")
+write.table(Output_names_only, "binning.csv", quote=FALSE, row.names=FALSE, sep = "\t")

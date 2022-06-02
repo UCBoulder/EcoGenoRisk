@@ -61,5 +61,7 @@ else:
 print("EC Binary Scoring is Complete")
 distance_list_for_synbio = pass_to_distance(name, sb_name, desired_location)          #Passes the filename of the binary matrix and the ID of organism
 print(distance_list_for_synbio)             #Prints distance matrix for the synbio genome
-np.savetxt("DistanceListforSynbio.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
-
+#np.savetxt("DistanceListforSynbio_Class.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
+#np.savetxt("DistanceListforSynbio_Order.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
+#np.savetxt("DistanceListforSynbio_Family.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
+np.savetxt("DistanceListforSynbio_Genus.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix

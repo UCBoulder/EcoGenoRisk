@@ -86,6 +86,8 @@ def tax_clustering(ec_space, synbio):
         ec_grouped = ec_space
         #ec_grouped.set_index("Name_of_Genome", inplace = True, drop= True)
         index_names_of_cluster = pd.DataFrame()
+
+    np.savetxt("ec_space_"+cluster_rank.lower()+".txt", ec_grouped)
     return ec_grouped, lineage_preference, index_names_of_cluster
 
 #complete

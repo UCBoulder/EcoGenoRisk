@@ -9,15 +9,16 @@ from distance_matrix_2022_06_1 import pass_to_distance
 
 ##Turn Back On After Testing!!
 
-# print("Welcome to EcoGeno! Enter the name of your FASTA file: ")
-# sb_filename = input()
-# print("Enter where you want results saved: ")
-# desired_location = input()
-# print("Enter organism ID, no punctuation: ")
-# sb_name = input()
+print("Welcome to EcoGeno! Enter the name of your FASTA file: ")
+sb_filename = input()
+print("Enter where you want results saved: ")
+desired_location = input()
+print("Enter organism ID, no punctuation: ")
+sb_name = input()
 desired_location = "/home/anna/PycharmProjects/pythonProject/Bacteria"
-sb_name = "Hello"
-sb_filename = "Test.faa"
+#Turn on when testing
+# sb_name = "Hello"
+# sb_filename = "Test.faa"
 matches = sb_filename+"_matches"
 
 # DIAMOND run --complete
@@ -61,7 +62,7 @@ else:
 print("EC Binary Scoring is Complete")
 distance_list_for_synbio = pass_to_distance(name, sb_name, desired_location)          #Passes the filename of the binary matrix and the ID of organism
 print(distance_list_for_synbio)             #Prints distance matrix for the synbio genome
-#np.savetxt("DistanceListforSynbio_Class.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
+np.savetxt("DistanceListforSynbio_Class.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
 #np.savetxt("DistanceListforSynbio_Order.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
 #np.savetxt("DistanceListforSynbio_Family.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
-np.savetxt("DistanceListforSynbio_Genus.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix
+#np.savetxt("DistanceListforSynbio_Genus.txt", distance_list_for_synbio, fmt='%s', delimiter= '\t')   #saves file of the synbio distance matrix

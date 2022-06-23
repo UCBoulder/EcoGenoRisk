@@ -48,7 +48,7 @@ def ec_weight_implementation(synbio_bacteria, pref_set, ec_name):
 #takes in the taxonomic names processed in R
 def tax_clustering(ec_space, synbio):
     ec_col = [col for col in ec_space.columns if "." in col]  # all columns that contain the ones and zeros
-    full_lineage =  pd.read_csv("taxonomy_clustering.txt", delimiter  = '\t', header = 0)        #number of rows are not even, code will not work otherwise
+    full_lineage =  pd.read_csv("taxonomy.txt", delimiter  = '\t', header = 0)        #number of rows are not even, code will not work otherwise
     #Change to user inputting taxid
     #print("Enter the known taxonomy of your synbio organism: ")
     #print("Kingdom: ") kingdom = input()
@@ -84,6 +84,7 @@ def tax_clustering(ec_space, synbio):
         index_names_of_cluster  = pd.DataFrame(ec_grouped.index)
     else:
         ec_grouped = ec_space
+        cluster_rank = "noClustering"
         #ec_grouped.set_index("Name_of_Genome", inplace = True, drop= True)
         index_names_of_cluster = pd.DataFrame()
 
@@ -112,31 +113,31 @@ def calculating_distance(input_df, genome_names, lineage_preference, index_names
 #complete
 def ec_weighting_preference(desired_loc):
 ##TURN ON AFTER COMPLETED TESTING
-    # print("Would you like to use/upload EC filter/weight scores: (Y/N) ")
-    # preference = input()
-    # if preference=="Y":
-    #     print("Would you like to upload your own filter/weight scores? ")
-    #     personal = input()
-    #     if personal == "Y":
-    #         print("Enter the name of your document: " )
-    #         filter_used = input()
-    #         personal_filter_path = os.path.abspath(filter_used)
-    #         if personal_filter_path != desired_loc:
-    #             os.shutil(filter_used, desired_loc)
-    #             default = 0
-    #     elif personal == "N":
-    #         print("You have selected to use the default filter: 2022_5_24_Proposed_Filter.csv")
-    #         filter_used = "2022_5_24_Proposed_Filter.csv"
-    #         default  = 0
-    #     else:
-    #         print("Error, try again!")
-    #         filter_used = "ERROR"
-    # else:
-    #     print("No EC filter/weight scores has been selected. All EC numbers will have equal weight")
-    #     default = 1
-    #     filter_used = " "
-    default = 0
-    filter_used = "2022_5_24_Proposed_Filter.csv"
+    print("Would you like to use/upload EC filter/weight scores: (Y/N) ")
+    preference = input()
+    if preference=="Y":
+        print("Would you like to upload your own filter/weight scores? ")
+        personal = input()
+        if personal == "Y":
+            print("Enter the name of your document: " )
+            filter_used = input()
+            personal_filter_path = os.path.abspath(filter_used)
+            if personal_filter_path != desired_loc:
+                os.shutil(filter_used, desired_loc)
+                default = 0
+        elif personal == "N":
+            print("You have selected to use the default filter: 2022_5_24_Proposed_Filter.csv")
+            filter_used = "2022_5_24_Proposed_Filter.csv"
+            default  = 0
+        else:
+            print("Error, try again!")
+            filter_used = "ERROR"
+    else:
+        print("No EC filter/weight scores has been selected. All EC numbers will have equal weight")
+        default = 1
+        filter_used = " "
+    #default = 0
+    #filter_used = "2022_5_24_Proposed_Filter.csv"
     return default, filter_used
 
 

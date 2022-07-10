@@ -35,7 +35,7 @@ print("Overall shape of archaea and bacteria summary matrix: ",np.shape(bacteria
 genomes_present = pd.DataFrame(bacteria_archaea.index, dtype='string')
 #genomes_present.reset_index(inplace=True)
 print(genomes_present)
-genomes_present.to_csv('list_of_names.csv', sep='\t', header=True, index=False)
+#genomes_present.to_csv('list_of_names.csv', sep='\t', header=True, index=False)
 
 ##(2) Combining and formatting of lineage documents
 ##LINEAGE DOCS ARE MANUALLY EDITTED ON LIBREOFFICE WITH THE FIND/REPLACE FUNCTION
@@ -56,15 +56,17 @@ print(bacteria_archaea_lin)
 #bacteria_archaea_lin.reset_index(inplace=True)
 # Prints out the total shape of the lneage key reference matrix
 print("Lineage Key Matrix shape: ", np.shape(bacteria_archaea_lin))
-bacteria_archaea_lin.to_csv('combined_lineage_doc.csv', sep='\t', header=True, index= True)
+#bacteria_archaea_lin.to_csv('combined_lineage_doc.csv', sep='\t', header=True, index= True)
 # Merges the combined binary matrix header with the lineage document
 # This provides a full lineage document for the genomes we have collected from archaea and bacteria
 # Note: this resultant matrix will be limited by the number of genomes we have collected
 print('\n', genomes_present.columns,'\n',bacteria_archaea_lin.columns)
 
-##(3) Merging of the two combined files based on GCF notation
+##(3) Merging of the two combined files based on GCF notation, keeps all of the entries based on the left input (genomes
+# we collected from NCBI), and replaces all of the blanks with NAs
 #taxonomy_lineage = genomes_present.join(bacteria_archaea_lin.set_index(["Name_of_Genome"], verify_integrity=True), on= ["Name_of_Genome"])
-taxonomy_lineage = pd.merge(genomes_present, bacteria_archaea_lin, on = ['Name_of_Genome'], how='inner')
+taxonomy_lineage = pd.merge(genomes_present, bacteria_archaea_lin, on = ['Name_of_Genome'], how='left')
+taxonomy_lineage.fillna('NA', inplace=True)
 #taxonomy_lineage = pd.merge(genomes_present, bacteria_archaea_lin, left_on = genomes_present.iloc[:,1], right_on=bacteria_archaea_lin.iloc[:,1])
 #taxonomy_lineage = genomes_present.merge(bacteria_archaea_lin, how='inner', on = "Name_of_Genome")
 #taxonomy_lineage = genomes_present.merge(bacteria_archaea_lin[list("Name_of_Genome")])

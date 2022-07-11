@@ -6,18 +6,22 @@ import os; import re; import numpy as np
 #This function requires the location of the DIAMOND search results found in diamond_impl, name of the domain
 #Input requires the list of EC numbers, DIAMOND search results, and domain name
 # Output is a space separated textfile that should be num genomes x num of EC num, as well as the location of the file
-def genome_extractor(diamond):
+def genome_extractor(diamond, name):
     #Changes the directory to the location of the DIAMOND search outputs
     os.chdir(diamond)
     # Opens the list of of EC numbers
-    ec_open = np.loadtxt('/home/anna/PycharmProjects/pythonProject/EC_num.csv', dtype='str')  # change to automatic download of EC_num
+    ec_open = np.loadtxt('/home/anna/PycharmProjects/HazID/EC_num.csv', dtype='str')  # change to automatic download of EC_num
     big_matrix = ["Name_of_Genome"]
     # Asks user to input name for EC matrix
     #input_name = input("Save EC binary summary matrix as (no spaces or capital letters): ")
     # Specifies document to be a csv type
     #file_name= input_name+".csv"
-    file_name = "synbio1_big_matrix.csv"
-    new_dir = diamond + '/'+file_name
+    #file_name = "synbio1_big_matrix.csv"
+    if name == "":
+        file_name = (os.path.basename(diamond)).rsplit('.', 1)[0]
+    else:
+        file_name = name
+    new_dir = diamond + '/' + file_name
     #Checks to see if the document already exists using full pathway name
     if os.path.exists(new_dir):
         print("Summary Matrix exists")
@@ -35,7 +39,7 @@ def genome_extractor(diamond):
             if item.endswith("_matches.tsv"):
                 print(item)
                 #Finds the name of the DIAMOND output file
-                genome = [item]
+                genome = [file_name]
                 print(genome)
                 # Iterates through all of the EC numbers (1:8197)
                 for ec in ec_open:

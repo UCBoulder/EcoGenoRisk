@@ -7,6 +7,7 @@ from os import path
 
 # Asks for input for domain, returns a specific NCBI RefSeq URL for protein file download
 # Stores the name of domain for future naming convention
+#domain = input_domain()
 def input_domain():
     #Creates a timestamp in form of date,month,year for naming convention
     str_date = date_time.strftime("%d-%m-%Y")
@@ -40,6 +41,7 @@ def input_domain():
 #Writes a new document and copies information from NCBI RefSeq
 # Input requires assembly summary download link and textfile name for assembly summary
 # Returns an assembly summary sheet that will be used as reference document for finding complete bacterial genomes
+#checking_assembly_file(text_file, url)
 def checking_assembly_file(text, link):  # asks for assembly_summary text file name, requires download link
     # prints current directory
     print(os.getcwd())
@@ -69,6 +71,7 @@ def checking_assembly_file(text, link):  # asks for assembly_summary text file n
 # Looping through assembly summary file, finding the samples that have a complete genome, and downloading the FTP file
 # Inputs requires the filled out assembly summary text file (derived from checking_assembly_file) and domain name (derived from input_domain)
 # Outputs the location of the FASTA protein files for all complete genome organisms
+#destination = file_extraction(text_file, new_domain)
 def file_extraction(text, dom):
     # prints current directory
     print(os.getcwd())
@@ -122,6 +125,7 @@ def file_extraction(text, dom):
 # Input is the location of protein files
 # No real output, the function extracts the compressed files
 # Code was appropriated from: https://gist.github.com/kstreepy/a9800804c21367d5a8bde692318a18f5
+#file_management(destination)
 def file_management(dest):
     dir_name = 'x'
     #References those files that are compressed
@@ -149,27 +153,23 @@ def file_management(dest):
 # Input requires the location of unzipped protein files that was returned in file_extractor, as well as the reference document
 # Output results in DIAMOND search results, which are lists of EC numbers found cited in each organisms protein sequence
 # Function returns the location of the new folder, DIAMOND matches
-#diamond_results_loc = diamond_impl(desired_location)
+#-1-new_folder = diamond_impl(destination, '')
+#-4-diamond_results_loc = diamond_impl(desired_location)
 def diamond_impl(dest, name):
-    os.chdir(dest)
     print(os.getcwd())
+    synbio_specific_folder = dest+"/DIAMOND_matches"
+    print("Proposed general library of organism is: ", synbio_specific_folder)
     # Creates another folder named DIAMOND matches to store DIAMOND output
-    #new_destination = dest + '/DIAMOND_matches'
     # Issues with file management and moving to appropriate places, construct code after the distance matrix comes out right
     #Checks to see if the folder already exists, and if not creates a new folder
-    # if os.path.exists(new_destination):
-    #     print("hey i kicked myself out")
-    #     #os.chdir(dest+'/DIAMOND_matches')
-    # else:
-    #     os.makedirs('DIAMOND_matches')
     # checks to see if the DIAMOND library is present in the new destination
-    if os.path.exists('/home/anna/PycharmProjects/pythonProject/reference.dmnd'):
-            #dest + '/reference.dmnd'):  # if there currently is no reference library (.dmnd), makedb creates a DIAMOND library
+    if os.path.isfile('reference.dmnd'):
         print("Library Detected")
     # If not present, created a DIAMOND library by referencing the exact location where the Uniprot library is saved
+    # if there currently is no reference library (.dmnd), makedb creates a DIAMOND library
     else:
         print("Creation of DIAMOND-formatted library...")
-        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/pythonProject/uniprot.fasta', '-d',
+        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/HazID/uniprot.fasta', '-d',
                   'reference']  # reference library full pathway
         subprocess.run(makedb)
         print("Library complete")
@@ -190,8 +190,7 @@ def diamond_impl(dest, name):
             print(matches)
             # If genome has not already undergone DIAMOND search and is currently located in the correct folder
             # the subprocess function will run the diamond search
-            new_destination = dest + "/" + matches
-            if not path.isfile(matches):
+            if not path.exists(dest+"/"+matches):
                 print("Processing ", file_name)
                 #DIAMOND search using the full pathway of the protein files, max target sequence outputs only one best match with highest e-value
                 blastp = ['diamond', 'blastp', '-d', 'reference.dmnd', '-q', file_path, '-o', matches,
@@ -203,7 +202,11 @@ def diamond_impl(dest, name):
                 #shutil.move(os.path.abspath(matches), new_destination)
                 # else:
                 #     #Moves DIAMOND outputs to designated folder
-                #     if not re.match(os.path.abspath(matches), new_destination):
-                #         shutil.move(os.path.abspath(matches), new_destination)
+                #if not os.path.exists(new_destination+"/"+matches):
+                #   shutil.move(os.path.abspath(matches), new_destination)
+            if not os.path.exists(synbio_specific_folder):
+                os.makedirs('DIAMOND_matches')
+                shutil.move(file_path, synbio_specific_folder)
+                shutil.move(os.path.abspath(matches), synbio_specific_folder)
     print("diamond_impl--success")
-    return dest
+    return synbio_specific_folder

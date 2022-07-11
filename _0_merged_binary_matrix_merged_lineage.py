@@ -8,7 +8,7 @@ import os
 # (3) Combined summary matrix and combined full lineage doc will be merged using the GCF names, under Name_of_Genome
 
 ##(1) Combining and formatting summary matrices
-os.chdir('/home/anna/PycharmProjects/pythonProject')
+os.chdir('/home/anna/PycharmProjects/HazID')
 #opens matrix summary files
 bac_big_matrix = pd.read_csv('bacteria_combined1.csv', delimiter=" ", header=0, index_col=0)
 arc_big_matrix = pd.read_csv('archaea_big_matrix.csv', delimiter=" ", header=0, index_col=0)

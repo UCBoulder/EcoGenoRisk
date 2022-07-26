@@ -1,3 +1,25 @@
+#setwd("C:/Users/ulano/OneDrive/Desktop/CMBM-GEM/R studio/Documents Required for PCA and Dendrogram Runs/Fungi")
+# If there are issues with installing/reinstalling packages, then use the following link and code below as a guide: 
+# https://stackoverflow.com/questions/63390194/package-xxx-was-installed-before-r-4-0-0-please-re-install-it
+##================UNINSTALLING AND REINSTALLING PACKAGES======================##
+# # check your package library path
+# .libPaths()
+# 
+# # grab old packages names
+# old_packages <- installed.packages(lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
+# old_packages <- as.data.frame(old_packages)
+# list.of.packages <- unlist(old_packages$Package)
+# 
+# # remove old packages
+# remove.packages( installed.packages( priority = "NA" )[,1] )
+# 
+# # reinstall all packages
+# new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+# if(length(new.packages)) install.packages(new.packages)
+# lapply(list.of.packages,function(x){library(x,character.only=TRUE)})
+##============================================================================##
+update.packages(checkBuilt = TRUE, ask = FALSE)
+
 setwd("C:/Users/ulano/OneDrive/Desktop/CMBM-GEM/R studio/Documents Required for PCA and Dendrogram Runs/Fungi")
 install.packages(c("ggplot2", "ggdendro", "janitor", "devtools","tidyverse", "stringr", "ggraph","dendextend", "randomcoloR", "colorspace"))
 install.packages("dbplyr", type = "binary")
@@ -19,28 +41,26 @@ library(ade4)
 # name4<-'Distance_matrix_Combined.txt'
 # name5 <-'wfilter_Distance_matrix_Combined.txt'
 
-rendering_plots<-function(name1, name2, name3, name4, name5){
-  
+rendering_plots<-function(name1, name2, name3, name4, loc){
   ##=========================READING IN FILES===================================##
   # Output from python  script 0, contains the full lineage for both archaea
   # and bacteria, along with GCF annotation
-  lineage <-read.delim(name1,header=TRUE, sep = "\t")
+  lineage <-read.delim(name3, header=TRUE, sep = "\t")
   
   #Output from python script 0, contains the binary matrices for archaea and bacteria
-  binary_matrix <-  read.table(name2, header=TRUE, quote = "", sep = '\t')
+  binary_matrix <-  read.table(paste(loc, name1, sep = '/'), header=TRUE, row.names = 'Name_of_Genome', quote = "", sep = '\t')
   
   # Output from python script 5, contains the EC space after binning depending on which rank the user selected
-  ec_rank <-read.delim(name3, header = TRUE, row.names ='Class', quote = "",  sep= '\t')
-  
+  ec_rank <-read.delim(paste(loc, name2, sep = '/'), header = TRUE ,quote = "",  sep= '\t')
   # Distance matrix from script 5, used for dendrogram construction 
-  d_rank <-read.delim(name4,header=FALSE, quote = "", sep = "\t")
-  
+  d_rank <-read.delim(paste(loc,name4, sep = '/'), header=FALSE, quote = "", sep = "\t")
+  print('Document upload is complete')
   ##=====================FINDS RANK USED FOR CLUSTERING=========================##
-  rank_txt <- unlist(strsplit(name3,'_'))[3]
+  # Uses EC averaged space for finding the rank
+  rank_txt <- unlist(strsplit(name2,'_'))[3]
   rank <- str_to_title(unlist(strsplit(rank_txt, '.txt')))
   index<-grep(rank, names(lineage), ignore.case ="True")
   rank_above <-names(lineage)[index-1]
-  
   ##=========================DATAFRAME FORMATTING===============================##
   # Checks that there are no row repeat in the overall combined matrix, can cause
   # issues in future processing. If repeats are found, then those rows are dropped
@@ -48,7 +68,7 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   n_occur <- data.frame(table(binary_matrix$Name_of_Genome))
   n_occur[n_occur$Freq > 1,]
   repeated_rows<-binary_matrix[binary_matrix$Name_of_Genom %in% n_occur$Var1[n_occur$Freq > 1],]
-  binary_matrix<-binary_matrix[!(binary_matrix$Name_of_Genome %in% c(repeated_matrix)), ]
+  binary_matrix<-binary_matrix[!(binary_matrix$Name_of_Genome %in% c(repeated_rows)), ]
   
   # Creates a reference dataframe for dendrogram coloring-- not complete
   # Creates a df containing only the GCF annotation, class and phylum 
@@ -56,14 +76,14 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   # Names the columns for consistency
   colnames(reference_key)<-c(rank, rank_above)
   
+  row.names(ec_rank)<-ec_rank[,rank]
+  ec_rank[,rank]<-NULL
   # Removes X in front of the EC numbers
   colnames(ec_rank) <- gsub("X", "", names(ec_rank))
   
   # Sets the square distance matrix column and index names as the rank names
-  list_of_rank<-row.names(ec_rank)
-  row.names(d_rank)<-list_of_rank
-  colnames(d_rank)<-list_of_rank
-  
+  row.names(d_rank)<-row.names(ec_rank)
+  colnames(d_rank)<-row.names(ec_rank)
   
   ##=====================COMPLETES AND PLOTS PCA================================##
   # Uses the phylogenetically clustered EC matrix, removes data that provides no 
@@ -72,19 +92,24 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   # Finds the names of the ranks, lineage bin names 
   # Number of ranks present, how many bins were created during clustering in script 5
   n<-nrow(ec_rank)
+  nonzero_ec_num <- ec_rank%>% select_if(colSums(ec_rank)!=0) 
+  summations_for_ec <- colSums(nonzero_ec_num)
   
+  #summations_for_ec<-colSums(ec_rank)
   # Finds  three bins where sums are greater than 400
   sum(summations_for_ec/n > 0.75)
   sum(summations_for_ec/n > 0.50)
   sum(summations_for_ec/n > 0.25)
+  
   # Creates a principle component table
   fit_prin_rank <- princomp(ec_rank[colSums(ec_rank)/n > 0.25], cor= TRUE)  #data type is list
   summary(fit_prin_rank) # print variance accounted for
   loadings(fit_prin_rank) # pc loadings
   plot(fit_prin_rank,type="lines") # scree plot
   write.table(fit_prin_rank$scores,"rank_scores.txt") # the principal components
+  
   # Plots PCA table by graphing component 2 and 3
-  # If encountering issues with ggbiplot invalid rot value, follow this guide: 
+  # If encountering issues with ggbiplot invalid rot value, then follow this guide: 
   # https://stackoverflow.com/questions/27016619/prcomp-and-ggbiplot-invalid-rot-value
   ggbiplot(fit_prin_rank,choices = 2:3, labels = row.names(fit_prin_rank$scores))  
   
@@ -95,6 +120,7 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   
   #Finds column sums for each EC number, divides by the total number of organisms to find percent frequency
   # creates a dataframe of EC number sorted sums
+  binary_matrix<-select_if(binary_matrix, is_numeric)
   sorted_ec <- as.data.frame(cbind(sort(colSums(binary_matrix)/sample_number, T)))
   
   # Binds the EC numbers to the sums 
@@ -129,7 +155,7 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   # Use link below as a guide for trouble shooting
   # https://stackoverflow.com/questions/43145448/how-to-color-dendrogram-labels-using-r-based-on-label-name-not-grouping
   #Creates a dendrogram factor
-  d_rank_factor<-factor(reference_key)
+  d_rank_factor<-factor(reference_key[,rank_above])
   d_rank[(d_rank)<0.001] <- 0
   # Creates a distance matrix by finding the distance between rows of matrix
   d_rank_asdistance <- as.dist(d_rank)
@@ -139,7 +165,7 @@ rendering_plots<-function(name1, name2, name3, name4, name5){
   #Creates dendrogram of the distance matrix
   dend4 <- as.dendrogram(fit_rank)
   #Finds number of unique Phylums present
-  #number_group<-length(unique(d_rank_factor))
+  number_group<-length(unique(d_rank_factor))
   n <- number_group
   # Saves dendrogram 1 as black and white diagram 
   plot(dend4)

@@ -169,7 +169,7 @@ def diamond_impl(dest):
         subprocess.run(makedb)
         print("Library complete")
    # for item in domain_folder, if item is a faa file, complete diamond analysis
-    for item in os.listdir(dest):
+    for item in sorted(os.listdir(dest)): #save the sorted list of genome file names for traceback 
         # Checks for file extension
         if item.endswith('.faa'):
             #Finds path of file

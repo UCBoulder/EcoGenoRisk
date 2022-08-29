@@ -1,54 +1,54 @@
-#setwd("C:/Users/ulano/OneDrive/Desktop/CMBM-GEM/R studio/Documents Required for PCA and Dendrogram Runs/Fungi")
-# If there are issues with installing/reinstalling packages, then use the following link and code below as a guide: 
+setwd("/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Test Case 2/Similar")
+# If there are issues with installing/reinstalling packages, then use the following link and code below as a guide:
 # https://stackoverflow.com/questions/63390194/package-xxx-was-installed-before-r-4-0-0-please-re-install-it
-##================UNINSTALLING AND REINSTALLING PACKAGES======================##
-# # check your package library path
-# .libPaths()
-# 
-# # grab old packages names
-# old_packages <- installed.packages(lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
-# old_packages <- as.data.frame(old_packages)
-# list.of.packages <- unlist(old_packages$Package)
-# 
-# # remove old packages
-# remove.packages( installed.packages( priority = "NA" )[,1] )
-# 
-# # reinstall all packages
-# new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-# if(length(new.packages)) install.packages(new.packages)
-# lapply(list.of.packages,function(x){library(x,character.only=TRUE)})
+#================UNINSTALLING AND REINSTALLING PACKAGES======================##
+# check your package library path
+.libPaths()
+
+# grab old packages names
+old_packages <- installed.packages(lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
+old_packages <- as.data.frame(old_packages)
+list.of.packages <- unlist(old_packages$Package)
+
+# remove old packages
+remove.packages( installed.packages( priority = "NA" )[,1] )
+
+# reinstall all packages
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+lapply(list.of.packages,function(x){library(x,character.only=TRUE)})
 ##============================================================================##
-update.packages(checkBuilt = TRUE, ask = FALSE)
+#update.packages(checkBuilt = TRUE, ask = FALSE)
+setwd('/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap')
+install.packages(c("ggplot2", "ggdendro", "janitor", "devtools","tidyverse", "circlize", "stringr", "ggraph","dendextend", "randomcoloR", "colorspace", dependencies = TRUE))
+install.packages("dbplyr", type = "binary", dependencies = TRUE)
+install.packages("ade4")
+library(stringr); packageVersion('stringr') #V 1.4.0
+library(colorspace); packageVersion('colorspace') #V 2.0.3
+library(janitor); packageVersion('janitor') #
+library(tidyverse); packageVersion('tidyverse') #V
+library(ggbiplot); packageVersion('ggbiplot')
+library(ggdendro); packageVersion('ggdrendro')
+library(dendextend); packageVersion('dendextend')
+library(dbplyr); packageVersion('dbplyr')
+library(randomcoloR); packageVersion('randomcoloR')
+library(ade4); packageVersion('ade4') #V 1.7.19
+library(circlize); packageVersion('circlize')
 
-setwd("C:/Users/ulano/OneDrive/Desktop/CMBM-GEM/R studio/Documents Required for PCA and Dendrogram Runs/Fungi")
-install.packages(c("ggplot2", "ggdendro", "janitor", "devtools","tidyverse", "stringr", "ggraph","dendextend", "randomcoloR", "colorspace"))
-install.packages("dbplyr", type = "binary")
-install.packages("ade4") 
-library(stringr)
-library(colorspace)
-library(janitor)
-library(tidyverse)
-library(ggbiplot)
-library(ggdendro)
-library(dendextend)
-library(dbplyr)
-library(randomcoloR)
-library(ade4)
-
-# name1<-'taxonomy.tsv'
-# name2<-"complete_binary_matrix.txt"
-# name3<-'ec_space_class.txt'
+# name3<-'taxonomy.tsv'
+# name1<-"complete_binary_matrix.txt"
+# name2<-'ec_space_genus.txt'
 # name4<-'Distance_matrix_Combined.txt'
-# name5 <-'wfilter_Distance_matrix_Combined.txt'
 
 rendering_plots<-function(name1, name2, name3, name4, loc){
+  
   ##=========================READING IN FILES===================================##
   # Output from python  script 0, contains the full lineage for both archaea
   # and bacteria, along with GCF annotation
   lineage <-read.delim(name3, header=TRUE, sep = "\t")
   
   #Output from python script 0, contains the binary matrices for archaea and bacteria
-  binary_matrix <-  read.table(paste(loc, name1, sep = '/'), header=TRUE, row.names = 'Name_of_Genome', quote = "", sep = '\t')
+  binary_matrix <-  read.table(paste(loc, name1, sep = '/'), header=TRUE, quote = "", sep = '\t')
   
   # Output from python script 5, contains the EC space after binning depending on which rank the user selected
   ec_rank <-read.delim(paste(loc, name2, sep = '/'), header = TRUE ,quote = "",  sep= '\t')
@@ -78,6 +78,9 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   
   row.names(ec_rank)<-ec_rank[,rank]
   ec_rank[,rank]<-NULL
+  print(ec_rank)
+  ec_rank<-ec_rank[,-1]
+  print(ec_rank)
   # Removes X in front of the EC numbers
   colnames(ec_rank) <- gsub("X", "", names(ec_rank))
   
@@ -94,20 +97,17 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   n<-nrow(ec_rank)
   nonzero_ec_num <- ec_rank%>% select_if(colSums(ec_rank)!=0) 
   summations_for_ec <- colSums(nonzero_ec_num)
-  
   #summations_for_ec<-colSums(ec_rank)
   # Finds  three bins where sums are greater than 400
   sum(summations_for_ec/n > 0.75)
   sum(summations_for_ec/n > 0.50)
   sum(summations_for_ec/n > 0.25)
-  
   # Creates a principle component table
   fit_prin_rank <- princomp(ec_rank[colSums(ec_rank)/n > 0.25], cor= TRUE)  #data type is list
   summary(fit_prin_rank) # print variance accounted for
   loadings(fit_prin_rank) # pc loadings
   plot(fit_prin_rank,type="lines") # scree plot
   write.table(fit_prin_rank$scores,"rank_scores.txt") # the principal components
-  
   # Plots PCA table by graphing component 2 and 3
   # If encountering issues with ggbiplot invalid rot value, then follow this guide: 
   # https://stackoverflow.com/questions/27016619/prcomp-and-ggbiplot-invalid-rot-value
@@ -120,7 +120,6 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   
   #Finds column sums for each EC number, divides by the total number of organisms to find percent frequency
   # creates a dataframe of EC number sorted sums
-  binary_matrix<-select_if(binary_matrix, is_numeric)
   sorted_ec <- as.data.frame(cbind(sort(colSums(binary_matrix)/sample_number, T)))
   
   # Binds the EC numbers to the sums 
@@ -155,7 +154,7 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   # Use link below as a guide for trouble shooting
   # https://stackoverflow.com/questions/43145448/how-to-color-dendrogram-labels-using-r-based-on-label-name-not-grouping
   #Creates a dendrogram factor
-  d_rank_factor<-factor(reference_key[,rank_above])
+  d_rank_factor<-factor(reference_key)
   d_rank[(d_rank)<0.001] <- 0
   # Creates a distance matrix by finding the distance between rows of matrix
   d_rank_asdistance <- as.dist(d_rank)
@@ -165,10 +164,11 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   #Creates dendrogram of the distance matrix
   dend4 <- as.dendrogram(fit_rank)
   #Finds number of unique Phylums present
-  number_group<-length(unique(d_rank_factor))
+  #number_group<-length(unique(d_rank_factor))
   n <- number_group
   # Saves dendrogram 1 as black and white diagram 
-  plot(dend4)
+  #plot(dend4)
+  circlize_dendrogram(dend4, labels_track_height = NA, dend_track_height = 0.5)
   #dev.off()
   #Creates a distinct color palette for each Phyla
   #palette <- distinctColorPalette(n)
@@ -182,14 +182,18 @@ rendering_plots<-function(name1, name2, name3, name4, loc){
   #Customizes dendrogram by coloring groups, setting label size, and makes the labels uniform as the individual branch hieght gets adjusted
   #dend4 <- dend4%>% set("labels_colors", col_group[['Phylum']])%>% set("labels_cex", 1) %>% raise.dendrogram (-1) %>% plot(main ="Method") # Set the margin on all sides to 6
   #legend("bottom", legend = levels(unique(d_rank_factor[['Phylum']])),  fill=palette, cex=0.6, x.intersp =0.1, y.intersp=0.75, title= "Associated Phylum", inset= c(0,0), ncol=3) 
-  
+
   ##============================= MANTEL TEST ==================================##
-  weighted_distances<- read.delim('wfilter_Distance_matrix_Combined.txt',header=FALSE, quote = "", sep = "\t")
-  unweighted_distances <- read.delim('Distance_matrix_Combined.txt', header=FALSE, quote = "", sep = "\t")
+  setwd("/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Test Case 2/Similar/Mantel Test")
+  weighted_distances<- read.delim('weighted_unclustered_Overall_distance_matrix.txt',header=FALSE, quote = "", sep = "\t")
+  unweighted_distances <- read.delim('unweighted_unclustered_Overall_distance_matrix.txt', header=FALSE, quote = "", sep = "\t")
   weighted_distances_dist<-dist(weighted_distances)
   unweighted_distances_dist<-dist(unweighted_distances)
   mantel.rtest(m1=weighted_distances_dist,m2=unweighted_distances_dist, nrepet = 9999)
-  
-  
+
 }
+rendering_plots('complete_binary_matrix.txt','ec_space_class.txt',
+                '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/taxonomy.tsv',
+                'E_Coli_Chimeria_Class_clustered_Distance_Matrix_Combined.txt',
+                '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Test Case 2/Similar')
 

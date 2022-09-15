@@ -2,6 +2,16 @@ import numpy
 import pandas as pd
 import numpy as np
 
+# Inputs are any data frame that needs transforming
+# Converts any dataframe into a single column dataframe
+# Outputs the single column df
+def to_one_column(df):
+    all_values = []
+    for column in df:
+        pathway_list = df[column].tolist()
+        all_values += pathway_list
+    one_col = pd.DataFrame(all_values, columns=['InChI-Key'])
+    return one_col
 
 ##====================================================================================================================##
 
@@ -56,9 +66,15 @@ def substrate_changes_synbio_v_chassis(pathway, chassis_bsm, synbio_bsm, differe
     # String processing of dataframe by removing 'EC-' from the start of the EC number
     metacyc_all_rxns['EC-Number'] = metacyc_all_rxns['EC-Number'].str.replace('EC-', '', regex=False)
     # Merges based on EC number to create a list of reactions/substrates occurring in top match
-    top_match_rxns = pd.merge(chassis_bsm, metacyc_all_rxns, on='EC-Number', how='inner')
+
+    ####################################################################################################################
+    ## Testing Different Methods: uncomment double hashtags for original code
+    ## top_match_rxns = pd.merge(chassis_bsm, metacyc_all_rxns, on='EC-Number', how='inner')
+    top_match_rxns = pd.merge(different_ECs, metacyc_all_rxns, on = 'EC-Number', how = 'inner')
+    ####################################################################################################################
+
     # Turn on to save the list of substrates found in top match
-    #top_match_rxns.to_csv('chassis_all_rxns.txt', header=True, index= True, sep='\t')
+    top_match_rxns.to_csv('chassis_all_rxns.txt', header=True, index= True, sep='\t')
     # Isolates the InChI Key column and splits the column based on // to isolate all substrates for top match
     chassis_InChI_Key = pd.DataFrame(top_match_rxns['InChI-Key'].str.split('//', expand=True))
     # Merges based on EC number to create a list of reactions/substrates occurring in synbio
@@ -158,7 +174,7 @@ def substrate_changes_modified_pathway(pathway, different_ECs):
 
 #synbio = 'Aquificota_Actinobacteria_Chimera'
 #synbio = 'Aquificota_Actinobacteria_Chimera_935_Off'
-#path = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Different'
+# path = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Different'
 path = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Similar'
 #synbio = 'E_Coli_Chimera'
 synbio = 'E_Coli_Chimera_1172_Off'
@@ -166,4 +182,7 @@ synbio = 'E_Coli_Chimera_1172_Off'
 pathway = '/home/anna/Desktop/EcoGenoRisk/HazID/CompetitorFind'
 individual_genome_rxns = substrate_changes_synbio_v_chassis(pathway, synbio_bsm, chassis_bsm, different_ECs)
 pathway_modifcation = substrate_changes_modified_pathway(pathway, different_ECs)
+non_repeated_InChIKeys = set(individual_genome_rxns)^set(pathway_modifcation)
+#non_repeated_InChIKeys = [x for x in pathway_modifcation if x not in individual_genome_rxns]
+np.savetxt('unique_inchikey.txt', non_repeated_InChIKeys, fmt='%s', delimiter='\t')
 print(individual_genome_rxns, '\n', pathway_modifcation)

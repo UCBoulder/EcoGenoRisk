@@ -13,4 +13,3 @@ HazID contains three modules: NicheOverlap, CompetitorFind, PoisInhibitor. HazID
 **_4_new_synbio_analysis**: This code will complete NicheOverlap analysis for a synthetic biology (synbio) organism. This will require a .faa file for the synbio organism. This code will run DIAMOND sequence aligner on the given .faa file, create a EC BSM for the organism, and send the results to **_5_synbio_distance_matrix.py**. <br /> 
 **_5_synbio_distance_matrix.py**: imports the synbio's EC BSM and returns a list of top match organisms by comparing the individual EC BSM. This script can also group by taxonomical preference and create a functional distance matrix that includes the synbio organism. <br />
 **_7_pca_dendro.R** : This code will conduct EC number frequency analysis, PCA, Robinson-Foulds metric test, and will construct a phenotype-based dendrogram. <br />
-

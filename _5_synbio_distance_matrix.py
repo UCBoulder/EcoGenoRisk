@@ -26,7 +26,7 @@ def genome_to_genome_diffcomp(synbio_ec, combined_ec):
     difference_based_comparison.columns = ['Organisms Compared to Synbio', 'Difference Score']
     difference_based_comparison = difference_based_comparison.sort_values(by='Difference Score',
                                                                           ignore_index=True).reset_index(drop=True)
-    difference_based_comparison.to_csv('Difference_Based_Comparison_Score.txt', header=True, index=True, sep='\t')
+    difference_based_comparison.to_csv('Chimera1_Difference_Based_Comparison_Score.txt', header=True, index=True, sep='\t')
 
 
 ##====================================================================================================================##
@@ -38,11 +38,12 @@ def genome_to_genome_diffcomp(synbio_ec, combined_ec):
 # compare_mat = read_in_binary_matrix(big_matrix_name, location)
 def read_in_binary_matrix(ec_binary, name):
     # Converts synbio summary matrix into a dataframe
-    binary_matrix_table = pd.read_csv(ec_binary, delimiter=" ", header=0, index_col=0)
+    binary_matrix_table = pd.read_csv(ec_binary, delimiter="\t", header=0, index_col=0)
+    binary_matrix_table.index =['Chimera1']
     print(binary_matrix_table)
     print(name, " size of ", np.shape(binary_matrix_table), " successfully imported.")
     # Opens the matrix that includes the Bacteria and Archaea summary result
-    bacteria_binary = pd.read_csv("/home/anna/PycharmProjects/HazID/binary_for_archaea_bacteria.csv",
+    bacteria_binary = pd.read_csv("/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/combined_binary_summary_matrix_2023_3_21.csv",
                                   delimiter="\t", header=0, index_col=0)
     # Sends to a function for direct genome to genome comparison based on EC summary matrix
     genome_to_genome_diffcomp(binary_matrix_table, bacteria_binary)
@@ -129,7 +130,7 @@ def ec_weight_implementation(synbio_bacteria, pref_set, ec_name):
 def tax_clustering(ec_space, synbio):
     # All of the column names that include '.' are selected (only the EC 1 and 0)
     ec_col = [col for col in ec_space.columns if "." in col]
-    doc_3_name = "/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/taxonomy.tsv"
+    doc_3_name = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/taxonomy_2023_3_21.tsv'
     full_lineage = pd.read_csv(doc_3_name, delimiter='\t',
                                header=0)
     # If the number of rows are not even, then code will not work otherwise
@@ -157,7 +158,11 @@ def tax_clustering(ec_space, synbio):
                      "Genus": genus
                      }
     # Appends synbio dataframe to the bottom of the full_lineage dataframe
-    full_lineage = full_lineage.append(blank_entries, ignore_index=True)
+    print(ec_space.columns)
+    print(full_lineage.columns)
+    ec_space.to_csv('ec_space_before_merging.txt', header=True, index=True, sep='\t')
+    ec_space.index.name = 'Name_of_Genome'
+    full_lineage = pd.merge(full_lineage,ec_space, on='Name_of_Genome', how='right')
     print("Lineage matrix size for the complete genomes is: ", full_lineage.shape)
     print("Would you like to cluster based on lineage? Y/N: ")
     lineage_preference = input()
@@ -185,7 +190,7 @@ def tax_clustering(ec_space, synbio):
     # Creates a dataframe of the EC averages only
     ec_grouped = pd.DataFrame(ec_grouped)
     # Packages name for the EC averaged space
-    doc_name_2 = "ec_space*_" + cluster_rank.lower() + ".txt"
+    doc_name_2 = "ec_grouped_by_" + cluster_rank.lower() + ".txt"
     # Saves the averaged EC space, will be used for PCA analysis in R
     ec_grouped.to_csv(doc_name_2, header=True, index=True, sep='\t')
     return ec_grouped, lineage_preference, index_names_of_cluster, cluster_rank, doc_name_2, doc_3_name
@@ -199,36 +204,39 @@ def tax_clustering(ec_space, synbio):
 def calculating_distance(input_df, genome_names, lineage_preference, index_names_of_cluster, genome_ID, rank):
     # Calculate the distances of the datafile using the pdist funciton from scipy. The intial return will only
     # provide the upper half of the comparisons (row-wise) to create a symetrical matrix then create squareform
-    name = genome_ID + "_" + rank + "_clustered_" + 'Distance_Matrix_Combined.txt'
+    name = genome_ID + "_" + rank + "_unclustered_" + 'Distance_Matrix_Combined.txt'
     distances_parallel = pairwise_distances(X=input_df, metric='euclidean', n_jobs=18)
     print("Shape of the entire distance matrix is: ", np.shape(distances_parallel))
     # NaNs at this stage may indicate header name mismatch - check if EC numbers are aligning
     # If wanting to save the full distance matrix, then turn the following flag on. Note: Well above 10 GB
     distances_parallel = pd.DataFrame(distances_parallel)
     # Returns the full distance matrix for dendrogram construction in R script
-    distances_parallel.to_csv('diff*_unweighted_unclustered_Overall_distance_matrix.txt', header=False, index=False, sep='\t')
+    #distances_parallel.to_csv('diff_weighted_unclustered_distance_matrix.txt', header=False, index=False, sep='\t')
+    #distances_parallel.to_csv('both_chimeras_distance_matrix_clustered.txt', header=False, index=False, sep='\t')
     print("Distance matrix is downloaded")
     if lineage_preference == "Y":
         # If the user chose to cluster, then the distance matrix will have the rank-related index names for synbio
-        distances_synbio = pd.concat([index_names_of_cluster.reset_index(drop=True),
-                                      distances_parallel.reset_index(drop=True)], axis=1)
+        #distances_synbio = pd.concat([index_names_of_cluster.reset_index(drop=True),distances_parallel.reset_index(drop=True)], axis=1)
         # Resets index so the rank column will be the top
         #distances_synbio.set_index(rank, inplace=True, drop=True)
-        distances_synbio.index = index_names_of_cluster
-        distances_synbio.to_csv('E_coli_Class_Clustered_DM.txt', header = True, index = True, sep='\t')
+        distances_parallel.index = index_names_of_cluster
+        distances_parallel.to_csv('Chimera1_unclustered_unweighted_DM.txt', header = True, index = True, sep='\t')
         # Finds the row that contains the Synbio unit
-        synbio_row = distances_synbio.loc['Synbio', :]
+        synbio_row = distances_parallel.loc['Chimera1', :]
         synbio_column = synbio_row.T
         # Creates the vertical genome names for the resulting matrix
         synbio_column.index = index_names_of_cluster
     else:
+        print(genome_names)
         # Converts the distance matrix of synbio as a data frame. Concat binds the row names dataframe with the synbio distance
         # matrix. Result should be a [2,#of total genomes]
-        distances_synbio = pd.concat([genome_names.reset_index(drop=True),
-                                      distances_parallel.reset_index(drop=True)], axis=1)
-        distances_synbio.set_index('Name_of_Genome', inplace=True, drop=True)
+        # distances_synbio = pd.concat([genome_names.reset_index(drop=True),
+        #                               distances_parallel.reset_index(drop=True)], axis=1)
+        distances_parallel.index = genome_names
+        distances_parallel.to_csv('Chimera1_unclustered_unweighted_DM.txt', header = True, index = True, sep='\t')
+        #distances_parallel.set_index('Name_of_Genome', inplace=True, drop=True)
         # Finds the row that contains the synbio genome based on genome ID
-        synbio_row = distances_synbio.loc['Synbio', :]
+        synbio_row = distances_parallel.loc['Chimera1',:]
         synbio_column = synbio_row.T
         # Creates the vertical genome names for the resulting matrix
         synbio_column.index = genome_names
@@ -284,10 +292,10 @@ def pass_to_distance(big_matrix_loc, genome_ID, location):
     [synbio_clustered_distances, name] = calculating_distance(clustered_ec, list_genomes, clustering_pref,
                                                               index_names, genome_ID, rank)
     # Saves the output from distance matrix
-    doc_name_4 = name
+    #doc_name_4 = name
     # Saves only the synbio column
     # Saves only the synbio column
     synbio_clustered_distances.to_csv(name, header=True, index=True, sep='\t')
     # Sends documents for R data processing
-    to_r_data_processing(doc_named_1,doc_name_2, doc_name_3, doc_name_4, location)
+    # to_r_data_processing(doc_named_1,doc_name_2, doc_name_3, doc_name_4, location)
     return synbio_clustered_distances, location

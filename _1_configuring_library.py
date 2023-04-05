@@ -13,7 +13,7 @@ new_domain = domain[1]
 ##===================================================================================================================##
 # Assembly summary text file will be used as a reference sheet for protein file download. Only complete genomes will be
 # downloaded and used for analysis
-text_file = "assembly_summary.txt"
+text_file = "/projects/anul3889/assembly_summary.txt"
 # Checks to see if the assembly summary file exists on path, if not present, then creates a new file
 checking_assembly_file(text_file, url, new_domain)
 ##===================================================================================================================##
@@ -24,10 +24,8 @@ destination = file_extraction(text_file, new_domain)
 file_management(destination)
 ##===================================================================================================================##
 # Checks for DIAMOND - based library and DIAMOND matches output.If not present, then runs DIAMOND
-destination = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/2022_07_18_Fungi_protein_file'
 os.chdir(destination)
 new_folder = diamond_impl(destination, '')
-new_folder = '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/2022_07_18_Fungi_protein_file/DIAMOND_matches'
 ##===================================================================================================================##
 #Iterates from DIAMOND matches and extracts the EC numbers present, constructs a binary EC summary matrix
 output = genome_extractor(new_folder, '')

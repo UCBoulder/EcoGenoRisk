@@ -21,7 +21,9 @@ def input_domain():
     now = datetime.now()
     str_date = now.strftime("%Y_%m_%d")
     domain = input("Enter domain:")
-    folder1_name = str_date + "_" + domain
+    # Change when done testing
+    domain = 'Archaea'
+    folder1_name = domain + "_" + str_date
     # Changes path to this new location to store all of the files in
     # Creates a new folder in this path. Folder name will start with the timestamp and end with the domain name
     # All new files/folders will be created in this folder
@@ -68,7 +70,7 @@ def checking_assembly_file(text, link,
         temp_genome_list = requests.get(link, headers=header)
         print(temp_genome_list.text)
         # Opens the empty assembly summary text file
-        with open(text, 'w') as genome_list_out:
+        with open(text, 'w+') as genome_list_out:
             # Copies content from the website, pastes it into assembly_summary file
             genome_list_out.write(
                 temp_genome_list.text)
@@ -185,7 +187,7 @@ def diamond_impl(dest, name):
     # If there currently is no reference library (.dmnd), then command makedb creates a DIAMOND library
     else:
         print("Creation of DIAMOND-formatted library...")
-        makedb = ['diamond', 'makedb', '--in', '/home/anna/PycharmProjects/HazID/uniprot.fasta', '-d',
+        makedb = ['diamond', 'makedb', '--in', '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/uniprot.fasta', '-d',
                   'reference']  # Reference library full pathway
         subprocess.run(makedb)
         print("Library complete")

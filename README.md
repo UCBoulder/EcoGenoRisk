@@ -17,11 +17,13 @@ HazID contains three modules: NicheOverlap, CompetitorFind, PoisInhibitor. HazID
 
 ## *CompetitorFind*: 
 **_1_competitorFind.py**: Completes top match (found in **_5_synbio_distance_matrix.py**) and synbio substrate overlap analysis. Finds the total substrate overlap between the two organism, substrate overlap in modified pathways, and mutualistic compounds that are found as products and reactants. <br />
+
 ### *CompetitorFind* Scoring Tests
 **CompetitorFind_test_cases.py**: Creates 10 enzymatically similar genome pairs, 10 enzymatically different genome pairs, 1000 random genome pairs to assess. The script sends the genome pairs to **separatefunctions.py** for analysis, and later assigns a *CompetitorFind* score. <br />
 **separatefunctions.py**: Contains the **_1_competitorFind.py** machinery to identify the substrate overlap. <br />
 **Competitor_Find_Scores.R**: plots the data found in **CompetitorFind_test_cases.py**. <br /><br />
-## Kehe et a
+### CompetitorFind vs. Ecological Relationships
+**kehe_dataset_testing.R**: Main script that launches Method 1 and Method 2 testing of ecological relationships using the Kehe et al. dataset. This script will subsets the Kehe et al. results dataset using a growth medium of interest  (sucrose, glutamine, etc.), and send the dataframe to **method1_kehe.R** for analysis.<br />
 
 ## *PoisInhibitor* 
 **_1_poisinhibitor.py**: Completes *PoisInhibitor* analysis for a user-inputted chemical agent. Compiles a list of organisms that are predicted to be inhibited by the chemical agent and its analogs. 

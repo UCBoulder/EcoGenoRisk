@@ -14,7 +14,6 @@ HazID contains three modules: NicheOverlap, CompetitorFind, PoisInhibitor. HazID
 **_5_synbio_distance_matrix.py**: Imports the synbio's EC BSM and returns a list of top match organisms by comparing the individual EC BSM. This script can also group by taxonomical preference and create a functional distance matrix that includes the synbio organism. <br />
 **_7_pca_dendro.R** : This code will conduct EC number frequency analysis, PCA, Robinson-Foulds metric test, and will construct a phenotype-based dendrogram. <br /><br />
 
-
 ## *CompetitorFind*: 
 **_1_competitorFind.py**: Completes top match (found in **_5_synbio_distance_matrix.py**) and synbio substrate overlap analysis. Finds the total substrate overlap between the two organism, substrate overlap in modified pathways, and mutualistic compounds that are found as products and reactants. <br />
 
@@ -24,10 +23,11 @@ HazID contains three modules: NicheOverlap, CompetitorFind, PoisInhibitor. HazID
 **Competitor_Find_Scores.R**: plots the data found in **CompetitorFind_test_cases.py**. <br /><br />
 ### CompetitorFind vs. Ecological Relationships
 **kehe_dataset_testing.R**: Main script that launches Method 1 and Method 2 testing of ecological relationships using the Kehe et al. dataset. This script will subsets the Kehe et al. results dataset using a growth medium of interest  (sucrose, glutamine, etc.), and send the dataframe to **method1_kehe.R** for analysis.<br />
-**method1_kehe.R**: Method 1 algorithm for evaluating the substrate overlap between genome groups outlined in Kehe et al. <br /><br />
+**method1_kehe.R**: Method 1 algorithm for evaluating the substrate overlap between genome groups outlined in Kehe et al. <br />
+**CompetitorFind_Method1_plotting_results.R**: plots the output summary document for Method 1. Creates a dot plot for ecological relationships, completes a Wilcoxon test with Competition as the reference.<br />
 ## *PoisInhibitor* 
 **_1_poisinhibitor.py**: Completes *PoisInhibitor* analysis for a user-inputted chemical agent. Compiles a list of organisms that are predicted to be inhibited by the chemical agent and its analogs. 
 <br /><br />
 
-References: <br />
+**References**: <br />
 Kehe, J., Ortiz, A., Kulesa, A., Gore, J., Blainey, P. C., & Friedman, J. (2021). Positive interactions are common among culturable bacteria. Science Advances, 7(45), eabi7159. https://doi.org/10.1126/sciadv.abi7159

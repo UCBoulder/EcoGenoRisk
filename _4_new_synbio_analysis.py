@@ -18,29 +18,27 @@ print("Enter organism ID, no punctuation (no space in between words): ")
 sb_name = 'Chimera1'  #input()
 print("Enter where you want results saved: ")
 desired_location='/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/TestCases'       #input()
-#os.chdir(desired_location)
-#os.makedirs(sb_name)
-desired_location = desired_location + "/" + sb_name
-#print(desired_location)
-#print(file_loc)
-#shutil.move(file_loc, desired_location)
-#matches = sb_filename + "_matches"
 os.chdir(desired_location)
-# ##====================================================================================================================##
-# # Calls on function from genomic data download, returns the location of the diamond results
-# # Calls on script _2_genomic_data_download.py
-# diamond_results_loc = diamond_impl(desired_location, sb_name)
-# print(diamond_results_loc)
-# #diamond_results_loc='/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/e_coli/DIAMOND_matches'
-# print("DIAMOND Results Completed")
-# ##====================================================================================================================##
-# # Summary Matrix Rendering-- Completes the binary matrix using the diamond hits outout (matches)
-# # Uses function from genomic_summary, requires the EC number full pathway which is subjected to change.
-# # Calls on script _3_genomic_summary.py
-# analysis_output = genome_extractor(diamond_results_loc, sb_name)
-# print(analysis_output)
-# ec_binary = analysis_output[0]
-ec_binary='/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/TestCases/Chimera1/chimera1_ec_bsm.txt'
+os.makedirs(sb_name)
+desired_location = desired_location + "/" + sb_name
+print(desired_location)
+print(file_loc)
+shutil.move(file_loc, desired_location)
+matches = sb_filename + "_matches"
+os.chdir(desired_location)
+##====================================================================================================================##
+# Calls on function from genomic data download, returns the location of the diamond results
+# Calls on script _2_genomic_data_download.py
+diamond_results_loc = diamond_impl(desired_location, sb_name)
+print(diamond_results_loc)
+print("DIAMOND Results Completed")
+##====================================================================================================================##
+# Summary Matrix Rendering-- Completes the binary matrix using the diamond hits outout (matches)
+# Uses function from genomic_summary, requires the EC number full pathway which is subjected to change.
+# Calls on script _3_genomic_summary.py
+analysis_output = genome_extractor(diamond_results_loc, sb_name)
+print(analysis_output)
+ec_binary = analysis_output[0]
 print("EC Binary Scoring is Complete")
 ##====================================================================================================================##
 # Passes the filename of the binary matrix and the ID of organism
@@ -50,6 +48,3 @@ print("EC Binary Scoring is Complete")
 print(distance_list_for_synbio)  # Prints distance matrix for the synbio genome
 print('Synbio analysis is complete')
 ##====================================================================================================================##
-# Sends synbio name and pathway of saved files to CompetitorFind scripts
-#print = new_loc
-#ec_locator(sb_name, new_loc)

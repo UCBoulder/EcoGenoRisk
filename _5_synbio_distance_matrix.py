@@ -216,9 +216,8 @@ def calculating_distance(input_df, genome_names, lineage_preference, index_names
     print("Distance matrix is downloaded")
     if lineage_preference == "Y":
         # If the user chose to cluster, then the distance matrix will have the rank-related index names for synbio
-        #distances_synbio = pd.concat([index_names_of_cluster.reset_index(drop=True),distances_parallel.reset_index(drop=True)], axis=1)
+        distances_synbio = pd.concat([index_names_of_cluster.reset_index(drop=True),distances_parallel.reset_index(drop=True)], axis=1)
         # Resets index so the rank column will be the top
-        #distances_synbio.set_index(rank, inplace=True, drop=True)
         distances_parallel.index = index_names_of_cluster
         distances_parallel.to_csv('Chimera1_unclustered_unweighted_DM.txt', header = True, index = True, sep='\t')
         # Finds the row that contains the Synbio unit
@@ -230,8 +229,8 @@ def calculating_distance(input_df, genome_names, lineage_preference, index_names
         print(genome_names)
         # Converts the distance matrix of synbio as a data frame. Concat binds the row names dataframe with the synbio distance
         # matrix. Result should be a [2,#of total genomes]
-        # distances_synbio = pd.concat([genome_names.reset_index(drop=True),
-        #                               distances_parallel.reset_index(drop=True)], axis=1)
+        distances_synbio = pd.concat([genome_names.reset_index(drop=True),
+                                       distances_parallel.reset_index(drop=True)], axis=1)
         distances_parallel.index = genome_names
         distances_parallel.to_csv('Chimera1_unclustered_unweighted_DM.txt', header = True, index = True, sep='\t')
         #distances_parallel.set_index('Name_of_Genome', inplace=True, drop=True)
@@ -245,20 +244,6 @@ def calculating_distance(input_df, genome_names, lineage_preference, index_names
     return synbio_column, name
 
 
-##====================================================================================================================##
-def to_r_data_processing(doc_name_1, doc_name_2, doc_name_3, doc_name_4, location):
-    print('Sending data to R script')
-    command = 'Rscript'
-    path2script = '/home/anna/rstudio-2022.02 (1).3-492-amd64-debian/completion_of_PCA_and_Dendro.R'
-    args = [location + '/' + doc_name_1, location + '/' + doc_name_2, doc_name_3, location + '/' + doc_name_4]
-    cmd = [command, path2script] + args
-    subprocess.call(['RStudio.sh', '_7_pca_dendro.R', doc_name_1, doc_name_2, doc_name_3])
-    return 'Sent'
-
-
-# to_r_data_processing('complete_binary_matrix.txt','"ec_space_class.txt',
-# '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/taxonomy.tsv','Mystery_Genome_Class_Distance_Matrix_Combined.txt',
-# '/home/anna/Desktop/EcoGenoRisk/HazID/NicheOverlap/Mystery_Organism')
 ##====================================================================================================================##
 # Grabs the big matrix name and the genome ID that the user provides
 # Combines the summary matrix for both synbio and Bacteria and Archaea
@@ -296,6 +281,4 @@ def pass_to_distance(big_matrix_loc, genome_ID, location):
     # Saves only the synbio column
     # Saves only the synbio column
     synbio_clustered_distances.to_csv(name, header=True, index=True, sep='\t')
-    # Sends documents for R data processing
-    # to_r_data_processing(doc_named_1,doc_name_2, doc_name_3, doc_name_4, location)
     return synbio_clustered_distances, location

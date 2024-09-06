@@ -1,4 +1,4 @@
-<span style="color:green;">EnCen.</span>
+<span style="color:green;">EnCen</span>
 =====
  Encen_HPC.py and EnCen_Local.ipynb are the scripts for generating large scale and small scale functional binary matrices and difference scores. 
  

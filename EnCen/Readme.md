@@ -11,7 +11,7 @@
 2) Analysis_Scripts
    - For running after Encen_HPC.py or EnCen_Local.ipynb, depending on your computation resources
    - Takes in the outputs of the above scripts and analyzes the data 
-3) graphs
-   -  The graphs folder contains the scripts for turning the output of _2_Dataframe_Creation.py into visualizations. 
+   **graphs**
+       -  The graphs folder contains the scripts for turning the output of _2_Dataframe_Creation.py into visualizations. 
 
  

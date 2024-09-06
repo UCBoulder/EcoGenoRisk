@@ -7,7 +7,7 @@ Please reach out to john.docter@colorado.edu with any questions
 
 Introduction
 ============
-EcoGenoRisk a risk assessment tool designed to assess the risk a synthetic organism can introduce into the environment. 
+EcoGenoRisk is designed to assess the risk a synthetic organism can introduce into the environment. 
 
 EcoGenoRisk is composed of HazID, EnvCen, and RiskQ(under development).
 

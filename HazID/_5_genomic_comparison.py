@@ -1,4 +1,4 @@
-#This is the _4_ and _5_ linearized, for conceptual understanding and to streamline the code when the time comes
+#This is the _4_ and _5_ linearized, for conceptual understanding and to streamline the code when the time comes. 
 ##--------------------------------------------------------------------------------------------#
 #[distance_list_for_synbio, new_loc ]= pass_to_distance(synbio_binary, sb_name, desired_location)
 #sb_name = 'GCF_002926195.1_ASM292619v1_protein'

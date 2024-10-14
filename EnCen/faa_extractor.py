@@ -1,6 +1,6 @@
 ### Extracts all files from .tar compressed files. /
 # parent directory is the folder the extracted file is in 
-# This script is to be used before directory_clear.py
+# This script is to be used before directory_clear.py. 
 
 
 

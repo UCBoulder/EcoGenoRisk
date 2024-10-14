@@ -2,7 +2,7 @@
 
 #SBATCH --nodes=1
 #SBATCH --ntasks=50
-#SBATCH --time=100:00:00
+#SBATCH --time=50:00:00
 #SBATCH --partition=blanca-cmbmgem
 #SBATCH --output=sample-%j.out
 #SBATCH --account=blanca-cmbmgem

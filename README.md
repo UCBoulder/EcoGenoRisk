@@ -30,3 +30,9 @@ Runs on DIAMOND and JGI to identify most susceptible biome to invasion across mu
 
 Allows for deep dive into bin lineage and enzymatic effect of synbio invasion on any given environment 
 
+
+**RiskQ**
+=========
+NeighborReplace: Confirms likely occupancy of a synbio organism within a given habitat through a taxonomic similairty search of resident organisms 
+
+OutfitterCheck: Predicts likely establishment or extinction by genomic predictions of all required functions matching physical-chemical constraints

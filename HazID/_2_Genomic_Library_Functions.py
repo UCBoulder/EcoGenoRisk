@@ -21,7 +21,7 @@ import numpy as np
 ##===================================================================================================================##
 #tsv_to_fasta takes in a tsv file generated from Uniprot and converts it into a FASTA format for use by DIAMOND
 ##Refernce_library is where the file is saved to. Output is the same. 
-###This initial step just downloads the TSV, reads it in, and writes it to the file name specified in reference_library
+###This initial step just downloads the TSV, reads it in, and writes it to the file name specified in reference_library.
 def tsv_to_fasta():
     reference_library = 'uniprot.tsv' 
     #this creates a file named 'uniprot.tsv' on the working directory. Should show within the EcoDr/EcoDr folder. 

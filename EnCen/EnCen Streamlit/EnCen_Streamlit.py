@@ -16,7 +16,7 @@ from EnCen_Functions import EC_extract, tsv_to_fasta, diamond_impl, genome_extra
 import altair as alt
 
 
-#Input Block_________________________________________________________________________________________________________________________________________________________________________________________
+#Input Block__________________________________________________________________________________________________________________________________________________________________________________________
 st.markdown("<h1 style='text-align: center;'>Environmental Census</h1>", unsafe_allow_html=True)
 st.header('A Bioinformatics Tool for Synthetic Biology Risk Assessments', divider='rainbow')
 st.write(':blue[Developed by John Docter, University of Colorado Boulder]')

@@ -1,7 +1,7 @@
 # Creates initial files needed for analysis. This program allows you to download FASTA protein files of all complete
 # organisms in a given domain, completes DIAMOND analysis by using the Uniprot EC number catalogue, and creates
 # a binary summary matrix that shows which EC groups a certain organism has
-# Inputs: user-inputted type of domain
+# Inputs: user-inputted type of domain. 
 # Outputs: FASTA protein files for complete genome assembly, DIAMOND searches, EC binary summary matrix
 import os
 from _2_Genomic_Library_Functions import input_domain, checking_assembly_file, file_extraction, file_management, tsv_to_fasta, EC_extract, diamond_impl, genome_extractor

@@ -49,7 +49,7 @@ def ec_comparison(sb_name, _5_output):
 
     print('Locating Variable EC numbers Complete')
     return different_ECs, top_match_bsm, synbio_bsm, top_match_name
-#_______________________________________________________________________________#_______________________________________________###
+#_______________________________________________________________________________#_______________________________________________####
 #sb_name = 'New_Synbio_Analysis_Output_Binary_matches.tsv'
 #_to_folder = '/projects/jodo9280/EcoDr/EcoDr/Competitor_Find'
 #top_match_bsm = Dataframe with all of the EC's present on the top match 

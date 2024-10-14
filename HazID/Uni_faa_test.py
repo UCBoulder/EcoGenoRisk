@@ -1,5 +1,5 @@
 #####-----------------------------------------------------------###
-#This script converts a 2 \t seperated TSV file into a FASTA file 
+#This script converts a 2 \t seperated TSV file into a FASTA file. 
 #Will then be plugged into _2_ line 200 
 ####------------------------------------------------------------###
 import requests

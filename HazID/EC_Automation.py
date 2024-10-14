@@ -1,7 +1,7 @@
 ###_______________________________________________________________________________________________## 
 #This is a test script for automating EC Number extraction. 
 ##This needs to take in a URL and extract just the ID from it, and put it into a CSV file so it can
-##fit into the existing _3_ script. 
+##fit into the existing _3_ script
 import requests
 from fake_useragent import UserAgent
 import time

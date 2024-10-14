@@ -10,7 +10,7 @@ from _5_genomic_comparison import pass_to_distance
 import sys
 #from _1_competitorFind import ec_locator
 ##====================================================================================================================##
-##This is all directory creation and file management 
+##This is all directory creation and file management. 
 
 sb_filename = '/projects/jodo9280/EcoDr/TestCases/GCF_002926195.1_ASM292619v1_protein.faa' #Takes in the synbio FASTA file 
 

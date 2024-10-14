@@ -102,7 +102,7 @@ def inchikey_translation(inhibited_org, inchikey_compound_name):
     return ec_inchikeys_inhibited
 
 
-#ec_inchikeys_inhibited is the list of ec's and inchikeys generated from the previous definition
+#ec_inchikeys_inhibited is the list of ec's and inchikeys generated from the previous definition. 
 #analogous is similair_compounds.txt Inchikeys
 def vulnerable_pop(ec_inchikeys_inhibited, analogous):
     # Merges the EC number. inhibitor in InChiKey notation, and organism species name with the taxonomy dataset

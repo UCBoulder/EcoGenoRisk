@@ -1,4 +1,5 @@
-<img src="Eco_logo" alt="Eco" width="400"/>
+
+<img src= "Eco_logo.png" alt="Eco" width="400"/>
 
 
 Primary Developer: John Docter

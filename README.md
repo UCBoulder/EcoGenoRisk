@@ -1,4 +1,4 @@
-![Eco](header.png)
+![Eco](Eco_logo.png)
 
 
 Primary Developer: John Docter

@@ -1,4 +1,4 @@
-![Eco](Eco_logo.png)
+<img src="Eco_logo" alt="Eco" width="400"/>
 
 
 Primary Developer: John Docter

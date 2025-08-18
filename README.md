@@ -10,7 +10,7 @@ Introduction
 ============
 EcoGenoRisk is designed to assess the risk a synthetic organism can introduce into the environment. 
 
-EcoGenoRisk is composed of HazID, EnvCen, and RiskQ(under development).
+EcoGenoRisk is composed of HazID, EnvCen, and RiskQ.
 
 **HazID**
 =========
@@ -30,6 +30,8 @@ Biome specific functional analysis
 Runs on DIAMOND and JGI to identify most susceptible biome to invasion across multiple biome inputs 
 
 Allows for deep dive into bin lineage and enzymatic effect of synbio invasion on any given environment 
+
+EnCen GUI Package is available to test the tool and run small analyses without heavy coding knowledge
 
 
 **RiskQ**

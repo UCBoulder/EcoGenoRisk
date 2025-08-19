@@ -4,11 +4,9 @@ Please reach out to john.docter@colorado.edu with any questions
 
 Introduction
 ============
-EcoGenoRisk is a risk assessment software for managing synthetic biology in the environment
-
 GUI_Package is the software for running analyses on your local machine. 
 
-High level and custom analyses can be done using the full code, located in the EcoDr repository, Eco_V2 branch. 
+Data heavy and custom analyses can be done using the full code (EnCen HPC). 
 
 Instructions
 ============
@@ -23,4 +21,4 @@ Useful Tips
 ===========
 "EC_List_For-Parsing.txt" needs to stay where it is relative to the main script. 
 
-"Post Processing Scripts" are for going outside the bounds of the GUI. There are scripts for cleaning data downloaded from JGI (for custom analyses) as well as analyzing the data that comes out of the program and visualizing it. The program will run fine without these, they are there as a "might be useful". 
+"Post Processing Scripts" are for going outside the bounds of the GUI. There are scripts for cleaning data downloaded from the Joint Genome Institute as well as analyzing the data that comes out of the program and visualizing it. The program will run fine without these, they are there in case of need. 
